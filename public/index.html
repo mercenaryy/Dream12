@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow OS — Capital Intelligence Platform</title>
+  <meta name="description" content="Flow OS continuously moves idle retail capital into real-world business cash flows. Invest manually in high-yield retail nodes.">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- BOOT SCREEN -->
+<div id="boot">
+  <div class="boot-logo">
+    <div class="boot-icon">F</div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div class="boot-name">Flow OS</div>
+      <div class="boot-sub">Capital Intelligence Platform</div>
+    </div>
+  </div>
+  <div class="boot-bar"></div>
+  <div class="boot-log" id="bmsg">loading system state<span class="cur">_</span></div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="top-left">
+      <div class="app-icon">F</div>
+      <div class="app-title-row">
+        <div class="app-name">Flow OS</div>
+        <div class="app-sub"><div class="sys-dot"></div><span id="sys-lbl">LIVE · LOADING</span></div>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="clock-pill" id="clock">--:--:--</div>
+      <button class="day-advance-btn" id="advance-btn" onclick="advanceDay()">
+        <span>▶</span> ADVANCE DAY
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <div class="hero-section">
+    <div class="hero-card">
+      <div class="hero-card-glow"></div>
+      <div class="hero-top">
+        <div>
+          <div class="hero-greeting">Your capital, always working</div>
+          <div class="hero-title">₹<span id="h-total">0</span> <span style="color:var(--txt2);font-weight:600;font-size:20px">total portfolio</span></div>
+        </div>
+        <div class="hero-status-pill">
+          <div class="sys-dot"></div>
+          <span id="hero-status-text">LOADING</span>
+        </div>
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <div class="hstat-label">Idle Capital</div>
+          <div class="hstat-val" id="h-idle">₹0</div>
+          <div class="hstat-sub" style="color:var(--txt3)">awaiting deployment</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hstat-label">Deployed</div>
+          <div class="hstat-val" id="h-deployed">₹0</div>
+          <div class="hstat-sub" id="h-dep-sub" style="color:var(--txt3)">0 positions</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hstat-label">Total Yield</div>
+          <div class="hstat-val" id="h-yield">₹0</div>
+          <div class="hstat-sub up" id="h-yield-sub">+0.00%</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hstat-label">Sim Day</div>
+          <div class="hstat-val" id="h-day">1</div>
+          <div class="hstat-sub amber">current day</div>
+        </div>
+      </div>
+      <div class="capital-bar-wrap">
+        <div class="capital-bar-labels">
+          <span class="cbl">Capital Utilization</span>
+          <span class="cbl" id="util-pct">0%</span>
+        </div>
+        <div class="capital-bar-track">
+          <div class="cbar-deployed" id="util-bar" style="width:0%"></div>
+          <div class="cbar-idle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYSTEM STATUS STRIP -->
+  <div class="ai-strip" id="ai-strip">
+    <div class="ai-orb" id="ai-orb"><div class="orb-inner"></div></div>
+    <div class="ai-label">SYSTEM</div>
+    <div class="ai-text" id="ai-msg"><span class="hi">System is online.</span> Click on any node to view details and invest.</div>
+    <div class="ai-api-badge">MANUAL MODE</div>
+  </div>
+
+  <!-- COLLECT ALL BANNER -->
+  <div class="redeploy" id="redeploy">
+    <div class="redeploy-text">Returns ready — <strong id="redeploy-amt">₹0</strong> from matured positions. Collect now.</div>
+    <button class="redeploy-btn" onclick="collectAll()">COLLECT ALL →</button>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- LEFT: NODES + ANALYTICS -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Investment Nodes</div>
+        <div class="section-badge" id="node-badge">8 nodes · loading</div>
+      </div>
+      <div class="nodes-grid" id="nodes-grid"></div>
+
+      <!-- Active Investments -->
+      <div style="margin-top:22px">
+        <div class="section-header">
+          <div class="section-title">Active Investments</div>
+          <div class="section-badge" id="inv-badge">0 positions</div>
+        </div>
+        <div id="investments-list">
+          <div class="hist-empty">No active investments. Click a node to invest.</div>
+        </div>
+      </div>
+
+      <!-- Portfolio Analytics -->
+      <div style="margin-top:22px">
+        <div class="section-header">
+          <div class="section-title">Portfolio Analytics</div>
+          <div class="section-badge">live</div>
+        </div>
+        <div class="portfolio-grid">
+          <div class="pstat"><div class="pstat-lbl">Risk Score</div><div class="pstat-val green" id="ps-risk">Low</div></div>
+          <div class="pstat"><div class="pstat-lbl">Avg Node Yield</div><div class="pstat-val amber" id="ps-yield">—</div></div>
+          <div class="pstat"><div class="pstat-lbl">Active Positions</div><div class="pstat-val" id="ps-active">0 / 8</div></div>
+          <div class="pstat"><div class="pstat-lbl">Capital Efficiency</div><div class="pstat-val green" id="ps-eff">—</div></div>
+        </div>
+      </div>
+
+      <!-- Cycle History -->
+      <div style="margin-top:22px">
+        <div class="section-header">
+          <div class="section-title">Cycle History</div>
+          <div class="section-badge" id="hist-count">0 cycles</div>
+        </div>
+        <div class="history-table" id="history-table">
+          <div class="hist-empty">No completed cycles yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- User Profile -->
+      <div class="side-card">
+        <div class="profile-row">
+          <div class="profile-avatar" id="user-avatar">A</div>
+          <div>
+            <div class="profile-name" id="user-name">Arjun Mehta</div>
+            <div class="profile-tier" id="user-tier">GROWTH INVESTOR</div>
+          </div>
+        </div>
+        <div class="portfolio-grid" style="margin-bottom:0">
+          <div class="pstat"><div class="pstat-lbl">Member Since</div><div class="pstat-val" style="font-size:11px" id="user-since">—</div></div>
+          <div class="pstat"><div class="pstat-lbl">Total Earned</div><div class="pstat-val green" style="font-size:12px" id="user-earned">₹0</div></div>
+        </div>
+        <div class="deposit-row">
+          <input class="deposit-input" type="number" id="deposit-input" placeholder="Add capital (₹)" min="500" step="500">
+          <button class="deposit-btn" onclick="depositCapital()">+ DEPOSIT</button>
+        </div>
+      </div>
+
+      <!-- Compounding Growth -->
+      <div class="side-card">
+        <div class="side-card-title">Compounding Growth</div>
+        <div class="compound-wrap">
+          <div class="arc-container">
+            <svg width="88" height="46" viewBox="0 0 88 46">
+              <path d="M7,46 A37,37,0,0,1,81,46" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4" stroke-linecap="round"/>
+              <path id="arc-path" d="M7,46 A37,37,0,0,1,81,46" fill="none" stroke="url(#arcGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="117" stroke-dashoffset="117" style="transition:stroke-dashoffset 1.2s ease"/>
+              <defs><linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#E8820C"/><stop offset="100%" stop-color="#F5A623"/></linearGradient></defs>
+            </svg>
+            <div class="arc-val" id="arc-val">0%</div>
+          </div>
+          <div class="compound-stats">
+            <div class="cs-row"><span class="cs-lbl">Cycles</span><span class="cs-val" id="cs-cycles">0</span></div>
+            <div class="cs-row"><span class="cs-lbl">Avg Yield</span><span class="cs-val" id="cs-avg">—</span></div>
+            <div class="cs-row"><span class="cs-lbl">Total Growth</span><span class="cs-val" id="cs-growth" style="color:var(--teal)">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Feed -->
+      <div class="side-card">
+        <div class="side-card-title">System Feed</div>
+        <div class="feed-list" id="feed-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap"><div class="ticker-inner" id="ticker"></div></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-pip" id="toast-pip"></div>
+  <div class="toast-msg" id="toast-msg"></div>
+</div>
+
+<!-- NODE DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-panel" id="modal-panel">
+    <button class="modal-close" onclick="closeNodeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
